@@ -1,8 +1,10 @@
 <?php
-session_start();
 
 // 1. KONEKSI DB (Saran: pindahin ke config.php nanti)
 require ('config.php');
+
+//$hashBaru = password_hash('admin123', PASSWORD_DEFAULT);
+//echo $hashBaru;
 
 // 2. LOGIKA LOGIN/LOGOUT
 if (isset($_GET['logout'])) { session_destroy(); header("Location: /"); exit; }

@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 if (!isset($_SESSION['logged_in'])) die("Access Denied");
 
 header('Content-Type: text/event-stream');
@@ -23,6 +23,7 @@ if (!$project) {
 
 // 2. Susun Command
 $run_sh = "/var/www/html/run.sh";
+//$run_sh = "/home/ryuu/my-homeserver/run.sh";
 $use_venv = $project['use_venv'];
 $folder = $project['folder_name'];
 $script = $project['script_name'];
