@@ -1,28 +1,94 @@
+<?php
+session_start();
+$ua = $_SERVER['HTTP_USER_AGENT'];
+$is_mobile = preg_match('/Mobile|Android|iPhone/i', $ua);
+$is_linux_desktop = (strpos($ua, 'Linux') !== false && !strpos($ua, 'Android'));
+$mewah = ($is_mobile && !$is_linux_desktop); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryuu Local Server</title>
-    <link href="/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        body { background: #f4f7f6; }
-        .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+/* Pastikan Modal berada di kasta tertinggi */
+.modal {
+z-index: 100051 !important;
+}
+
+.modal-backdrop {
+z-index: 100050 !important;
+}
+
+canvas.vanta-canvas {
+        pointer-events: none !important;
+    }
+
+/* Fix agar canvas background benar-benar di bawah dan tidak menangkap klik */
+#canvas-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1 !important; /* Wajib minus */
+    pointer-events: none;   /* Supaya klik 'tembus' ke elemen di bawahnya */
+}
+
+/* Khusus mewah mode, pastikan body tidak memblokir pointer */
+.mewah-mode {
+    isolation: isolate;
+}
+        /* BASE STYLE (Standard Laptop) */
+        body { background: #f4f7f6; transition: 0.5s; position: relative; }
+        .navbar-custom { background: white; border-bottom: 1px solid #e0e0e0; padding: 10px 20px; z-index: 1000; position: relative; }
+        .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; color: #2c3e50; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #2c3e50; }
-        .item-card { background: white; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; text-decoration: none; display: block; height: 100%; border: 1px solid #e0e0e0; }
+        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        
+        /* FOLDER CARD STANDARD */
+        .item-card { background: white; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; text-decoration: none; display: block; border: 1px solid #e0e0e0; color: #2c3e50; }
         .item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .navbar-custom { background: white; border-bottom: 1px solid #e0e0e0; padding: 10px 20px; }
-        #terminalBody { background: #000; color: #0f0; border-radius: 5px; font-family: monospace; }
+
+        /* HIGH-END MODE (Mobile HP Only) */
+        <?php if ($mewah): ?>
+        body { background: #050505 !important; color: #ffffff; overflow-x: hidden; }
+        .card { 
+            background: rgba(255, 255, 255, 0.05) !important; 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+        }
+        .stat-value { 
+            color: #ffffff !important; 
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.8) !important; 
+        }
+        .label-text { color: rgba(255,255,255,0.7) !important; font-weight: bold; }
+        .item-card { 
+            background: rgba(255, 255, 255, 0.05) !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            color: white !important;
+        }
+        .item-name { color: white !important; }
+        .navbar-custom { background: rgba(0,0,0,0.5) !important; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); color: white !important; }
+        .text-muted { color: rgba(255,255,255,0.5) !important; }
+        <?php endif; ?>
+        
+        #terminalBody { background: #000; color: #0f0; border-radius: 5px; font-family: monospace; overflow-y: auto; }
     </style>
 </head>
-<body>
+<body class="<?= $mewah ? 'mewah-mode' : '' ?>">
+<div id="canvas-bg"></div>
 
 <?php if (isset($_SESSION['logged_in'])): ?>
 <div class="navbar-custom d-flex justify-content-between align-items-center mb-4">
-    <span class="fw-bold">📁 Storage Explorer</span>
+    <span class="fw-bold"><i class="bi bi-hdd-network me-2"></i>Ryuu Server Explorer</span>
     <div class="d-flex align-items-center">
-        <span class="me-3 small text-muted">User: <?= $_SESSION['username'] ?></span>
+        <span class="me-3 small opacity-75">Dev: <?= $_SESSION['username'] ?></span>
         <a href="?logout=1" class="btn btn-sm btn-outline-danger">Logout</a>
     </div>
 </div>
