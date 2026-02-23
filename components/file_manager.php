@@ -135,25 +135,13 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
     });
 </script>
 <?php endif; ?>
-<div class="modal fade" id="terminalModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" style="z-index: 10000;">
-        <div class="modal-content bg-dark text-white border-secondary shadow-lg">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-info" id="modalTitle">
-                    <i class="bi bi-terminal me-2"></i>Terminal Output
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: relative; z-index: 10001;"></button>
-            </div>
-            <div class="modal-body" style="position: relative; z-index: 10001;">
-                <div id="inputSection" class="mb-3 p-3 border border-secondary rounded bg-white bg-opacity-10">
-                    </div>
-                <div id="terminalBody" class="p-3 small border border-secondary rounded" style="height: 300px; background: #000; overflow-y: auto;">
-                    Menunggu perintah...
-                </div>
-            </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" id="btnStartExecute" class="btn btn-info w-100 fw-bold">JALANKAN SCRIPT</button>
-            </div>
+<div id="simpleInputOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:#111; border:1px solid #00d2ff; padding:20px; border-radius:10px; width:100%; max-width:400px; box-shadow:0 0 20px rgba(0,210,255,0.3);">
+        <h6 id="ovTitle" style="color:#00d2ff; margin-bottom:15px; font-weight:bold;">PARAMETER SETUP</h6>
+        <div id="ovBody"></div>
+        <div style="margin-top:20px; display:flex; gap:10px;">
+            <button id="ovCancel" style="flex:1; background:#333; color:#fff; border:none; padding:10px; border-radius:5px;">CANCEL</button>
+            <button id="ovConfirm" style="flex:2; background:#00d2ff; color:#000; border:none; padding:10px; border-radius:5px; font-weight:bold;">LAUNCH</button>
         </div>
     </div>
 </div>
