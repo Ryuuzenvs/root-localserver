@@ -28,6 +28,8 @@ if (!isset($_SESSION['logged_in'])) {
 } else {
     // TAMPILKAN DASHBOARD UTAMA
     echo '<div class="container py-4">';
+    // Di dalam blok dashboard (setelah login)
+//include 'components/waifu_intro.php';
     
     include 'components/system_monitor.php'; // Kode monitor kamu
     echo '<hr class="my-5">';

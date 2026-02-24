@@ -14,6 +14,32 @@ $mewah = ($is_mobile && !$is_linux_desktop);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
+    .item-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+    .item-card:hover {
+        background: rgba(0, 210, 255, 0.1);
+        border-color: #00d2ff;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .item-name {
+        font-size: 0.85rem;
+        margin-top: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* Sembunyikan tombol hapus kecuali saat di hover */
+    .group-item form { visibility: hidden; opacity: 0; transition: 0.2s; }
+    .group-item:hover form { visibility: visible; opacity: 1; }
+</style>
     <style>
 /* Pastikan Modal berada di kasta tertinggi */
 .modal {

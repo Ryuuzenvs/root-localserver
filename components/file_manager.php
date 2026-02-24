@@ -1,5 +1,24 @@
 
 <?php
+// --- CRUD LOGIC ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['logged_in'])) {
+    // 1. Buat Folder Baru
+    if (isset($_POST['action']) && $_POST['action'] === 'mkdir') {
+        $new_folder = $target_dir . DIRECTORY_SEPARATOR . $_POST['folder_name'];
+        if (!file_exists($new_folder)) mkdir($new_folder, 0775);
+    }
+    
+    // 2. Hapus File/Folder
+    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+        $target = $target_dir . DIRECTORY_SEPARATOR . $_POST['item_name'];
+        if (is_dir($target)) rmdir($target); // Hati-hati: rmdir hanya kerja jika folder kosong
+        else unlink($target);
+    }
+
+    // Refresh halaman agar list terupdate
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
 // --- LOGIC FILE EXPLORER ---
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $root_path = realpath($_SERVER['DOCUMENT_ROOT']);
@@ -53,7 +72,21 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
         <?php endforeach; ?>
     </div>
 </div>
-
+<div class="d-flex justify-content-between align-items-end mb-3 mt-4">
+    <div>
+        <h5 class="text-white mb-0" style="text-shadow: 0 0 10px #00d2ff;">File Explorer</h5>
+        <small class="text-muted"><?= count($folders_list) ?> Folders | <?= count($files_list) ?> Files</small>
+    </div>
+    <div class="d-flex gap-2">
+        <form method="POST" class="d-flex gap-2 align-items-center bg-dark p-1 rounded-3 border border-secondary">
+            <input type="hidden" name="action" value="mkdir">
+            <input type="text" name="folder_name" class="form-control form-control-sm bg-transparent text-white border-0" placeholder="New Folder..." required style="width: 150px;">
+            <button type="submit" class="btn btn-sm btn-info shadow-sm">
+                <i class="bi bi-folder-plus"></i>
+            </button>
+        </form>
+    </div>
+</div>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb bg-white p-2 border rounded shadow-sm">
         <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door"></i> Root</a></li>
@@ -79,28 +112,44 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
     <?php endif; ?>
 
    <?php foreach ($folders_list as $f): ?>
-    <div class="col">
-        <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center <?= $mewah ? 'animate__animated animate__fadeIn' : '' ?>">
-            <div class="folder-wrapper position-relative">
-                <i class="bi bi-folder-fill text-warning" style="font-size: 3.5rem;"></i>
-            </div>
-            <div class="item-name fw-bold"><?= $f['name'] ?></div>
-            <div class="badge rounded-pill bg-warning text-dark px-2" style="font-size: 0.6rem; opacity: 0.8;">Directory</div>
-        </a>
-    </div>
-    <?php endforeach; ?>
+<div class="col position-relative group-item">
+    <form method="POST" class="position-absolute" style="top: 5px; right: 20px; z-index: 10;" onsubmit="return confirm('Hapus folder ini?')">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="item_name" value="<?= $f['name'] ?>">
+        <button type="submit" class="btn btn-link text-danger p-0 m-0" style="text-decoration: none; opacity: 0.6;">
+            <i class="bi bi-x-circle-fill"></i>
+        </button>
+    </form>
+
+    <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center <?= $mewah ? 'animate__animated animate__fadeIn' : '' ?>">
+        <div class="folder-wrapper position-relative">
+            <i class="bi bi-folder-fill text-warning" style="font-size: 3.5rem;"></i>
+        </div>
+        <div class="item-name fw-bold text-white"><?= $f['name'] ?></div>
+        <div class="badge rounded-pill bg-warning text-dark px-2" style="font-size: 0.6rem; opacity: 0.8;">Directory</div>
+    </a>
+</div>
+<?php endforeach; ?>
     
     <?php foreach ($files_list as $f): ?>
-    <div class="col">
-        <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center">
-            <div class="file-wrapper">
-                <i class="bi bi-file-earmark-code-fill text-info" style="font-size: 3.5rem; opacity: 0.8;"></i>
-            </div>
-            <div class="item-name"><?= $f['name'] ?></div>
-            <div class="text-muted" style="font-size: 0.65rem;"><?= $f['size'] ?> KB</div>
-        </a>
-    </div>
-    <?php endforeach; ?>
+<div class="col position-relative group-item">
+    <form method="POST" class="position-absolute" style="top: 5px; right: 20px; z-index: 10;" onsubmit="return confirm('Hapus file ini?')">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="item_name" value="<?= $f['name'] ?>">
+        <button type="submit" class="btn btn-link text-danger p-0 m-0" style="text-decoration: none; opacity: 0.6;">
+            <i class="bi bi-trash-fill" style="font-size: 0.8rem;"></i>
+        </button>
+    </form>
+
+    <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center">
+        <div class="file-wrapper">
+            <i class="bi bi-file-earmark-code-fill text-info" style="font-size: 3.5rem; opacity: 0.8;"></i>
+        </div>
+        <div class="item-name text-light"><?= $f['name'] ?></div>
+        <div class="text-muted" style="font-size: 0.65rem;"><?= $f['size'] ?> KB</div>
+    </a>
+</div>
+<?php endforeach; ?>
 </div>
 
 
