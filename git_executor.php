@@ -65,4 +65,5 @@ if (is_resource($process)) {
     proc_close($process);
 }
 
+//done
 echo "data: [PROSES SELESAI]\n\n";
