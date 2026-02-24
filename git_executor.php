@@ -52,7 +52,6 @@ $cmd = "cd " . escapeshellarg($target_dir) . " && " .
        "git status 2>&1 && " .
        "echo '--- ATTEMPTING PUSH ---' && " .
        "git push 2>&1"; 
-       "git status 2>&1 && " .
 
 $process = proc_open($cmd, [1 => ["pipe", "w"], 2 => ["pipe", "w"]], $pipes);
 
