@@ -85,5 +85,26 @@ if (document.getElementById('cpu_usage')) {
     setInterval(updateStats, 3000);
 }
 </script>
+<script>
+    const htmlElement = document.documentElement;
+    const themeSwitch = document.getElementById('darkModeSwitch');
+
+    // 1. Cek simpanan tema di browser
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.setAttribute('data-bs-theme', savedTheme);
+    if (savedTheme === 'dark') themeSwitch.checked = true;
+
+    // 2. Listener saat tombol di-klik
+    themeSwitch.addEventListener('change', () => {
+        if (themeSwitch.checked) {
+            htmlElement.setAttribute('data-bs-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            // Jika mewah mode mati, kita bisa paksa ganti warna teks manual di sini jika perlu
+        } else {
+            htmlElement.setAttribute('data-bs-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+</script>
 </body>
 </html>

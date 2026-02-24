@@ -1,12 +1,11 @@
 <?php
-session_start();
 $ua = $_SERVER['HTTP_USER_AGENT'];
 $is_mobile = preg_match('/Mobile|Android|iPhone/i', $ua);
 $is_linux_desktop = (strpos($ua, 'Linux') !== false && !strpos($ua, 'Android'));
 $mewah = ($is_mobile && !$is_linux_desktop); 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="<?= $mewah ? 'dark' : 'light' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +13,31 @@ $mewah = ($is_mobile && !$is_linux_desktop);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="fasfa/css/all.min.css"/>
+    <link rel="stylesheet" href="bs/bootstrap.min.css"/>
 <style>
+/* Custom Pure Black Theme untuk Bootstrap 5.3 */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #050505;
+    --bs-body-color: #e0e0e0;
+    --bs-tertiary-bg: #111111;
+}
+
+[data-bs-theme="dark"] .card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .navbar-custom {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border-bottom: 1px solid #333;
+}
+
+/* Biar icon folder tetep nyala di tema gelap */
+[data-bs-theme="dark"] .bi-folder-fill {
+    color: #ffca28 !important;
+}
     .item-card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -115,6 +138,14 @@ canvas.vanta-canvas {
     <span class="fw-bold"><i class="bi bi-hdd-network me-2"></i>Ryuu Server Explorer</span>
     <div class="d-flex align-items-center">
         <span class="me-3 small opacity-75">Dev: <?= $_SESSION['username'] ?></span>
+<div class="d-flex align-items-center me-3">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="darkModeSwitch" style="cursor: pointer;">
+        <label class="form-check-label small opacity-75 ms-1" for="darkModeSwitch">
+            <i class="bi bi-moon-stars-fill"></i>
+        </label>
+    </div>
+</div>
         <a href="?logout=1" class="btn btn-sm btn-outline-danger">Logout</a>
     </div>
 </div>

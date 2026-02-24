@@ -48,6 +48,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['logged_in'])) {
         if (is_dir($target)) rmdir($target); // Hati-hati: rmdir hanya kerja jika folder kosong
         else unlink($target);
     }
+    // 3. Buat File Baru
+if (isset($_POST['action']) && $_POST['action'] === 'touch') {
+    $new_file = $target_dir . DIRECTORY_SEPARATOR . $_POST['file_name'];
+    if (!file_exists($new_file)) file_put_contents($new_file, "");
+    header("Location: " . $_SERVER['REQUEST_URI']); exit;
+}
+
+// 4. Save Content (Editor)
+if (isset($_POST['action']) && $_POST['action'] === 'save_file') {
+    $filepath = $root_path . $_POST['filepath'];
+    file_put_contents($filepath, $_POST['content']);
+    header("Location: " . $_SERVER['REQUEST_URI']); exit;
+}
+// ... kode CRUD sebelumnya ...
+if (isset($_POST['action']) && $_POST['action'] === 'rename') {
+    $old_path = $target_dir . DIRECTORY_SEPARATOR . $_POST['old_name'];
+    $new_path = $target_dir . DIRECTORY_SEPARATOR . $_POST['new_name'];
+    if (file_exists($old_path)) {
+        rename($old_path, $new_path);
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']); exit;
+}
 
     // Refresh halaman agar list terupdate
     header("Location: " . $_SERVER['REQUEST_URI']);
@@ -85,6 +107,12 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
                 <i class="bi bi-folder-plus"></i>
             </button>
         </form>
+
+        <form method="POST" class="d-flex gap-2 align-items-center bg-dark p-1 rounded-3 border border-secondary">
+        <input type="hidden" name="action" value="touch">
+        <input type="text" name="file_name" class="form-control form-control-sm bg-transparent text-white border-0" placeholder="script.py" required style="width: 120px;">
+        <button type="submit" class="btn btn-sm btn-info"><i class="bi bi-file-earmark-plus"></i></button>
+    </form>
     </div>
 </div>
 <nav aria-label="breadcrumb">
@@ -113,6 +141,11 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
 
    <?php foreach ($folders_list as $f): ?>
 <div class="col position-relative group-item">
+<div class="position-absolute d-flex gap-2" style="top: 5px; right: 20px; z-index: 10;">
+
+<button onclick="openRename('<?= $f['name'] ?>')" class="btn btn-link text-info p-0 m-0 shadow-none">
+            <i class="bi bi-pencil-square"></i>
+        </button>
     <form method="POST" class="position-absolute" style="top: 5px; right: 20px; z-index: 10;" onsubmit="return confirm('Hapus folder ini?')">
         <input type="hidden" name="action" value="delete">
         <input type="hidden" name="item_name" value="<?= $f['name'] ?>">
@@ -120,12 +153,12 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
             <i class="bi bi-x-circle-fill"></i>
         </button>
     </form>
-
+</div>
     <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center <?= $mewah ? 'animate__animated animate__fadeIn' : '' ?>">
         <div class="folder-wrapper position-relative">
             <i class="bi bi-folder-fill text-warning" style="font-size: 3.5rem;"></i>
         </div>
-        <div class="item-name fw-bold text-white"><?= $f['name'] ?></div>
+        <div class="item-name fw-bold text-black"><?= $f['name'] ?></div>
         <div class="badge rounded-pill bg-warning text-dark px-2" style="font-size: 0.6rem; opacity: 0.8;">Directory</div>
     </a>
 </div>
@@ -133,19 +166,28 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
     
     <?php foreach ($files_list as $f): ?>
 <div class="col position-relative group-item">
-    <form method="POST" class="position-absolute" style="top: 5px; right: 20px; z-index: 10;" onsubmit="return confirm('Hapus file ini?')">
+
+<div class="position-absolute d-flex gap-2" style="top: 5px; right: 20px; z-index: 10;">
+
+<a href="<?= $f['link'] ?>" class="btn btn-link text-info p-0 m-0 shadow-none">
+            <i class='fa-solid fa-floppy-disk'></i>
+        </a>
+<button onclick="openRename('<?= $f['name'] ?>')" class="btn btn-link text-info p-0 m-0 shadow-none">
+            <i class="bi bi-pencil-square"></i>
+        </button>
+    <form method="POST" class="position-absolute" style="top: 0px; right: 8vh; z-index: 10;" onsubmit="return confirm('Hapus file ini?')">
         <input type="hidden" name="action" value="delete">
         <input type="hidden" name="item_name" value="<?= $f['name'] ?>">
         <button type="submit" class="btn btn-link text-danger p-0 m-0" style="text-decoration: none; opacity: 0.6;">
             <i class="bi bi-trash-fill" style="font-size: 0.8rem;"></i>
         </button>
     </form>
-
-    <a href="<?= $f['link'] ?>" class="item-card text-decoration-none d-block text-center">
+</div>
+    <a href="editor.php?file=<?= $f['link'] ?>" class="item-card text-decoration-none ...">
         <div class="file-wrapper">
             <i class="bi bi-file-earmark-code-fill text-info" style="font-size: 3.5rem; opacity: 0.8;"></i>
         </div>
-        <div class="item-name text-light"><?= $f['name'] ?></div>
+        <div class="item-name text-black"><?= $f['name'] ?></div>
         <div class="text-muted" style="font-size: 0.65rem;"><?= $f['size'] ?> KB</div>
     </a>
 </div>
@@ -194,3 +236,39 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
         </div>
     </div>
 </div>
+<script>
+function openRename(oldName) {
+    const overlay = document.getElementById('simpleInputOverlay');
+    const title = document.getElementById('ovTitle');
+    const body = document.getElementById('ovBody');
+    const confirmBtn = document.getElementById('ovConfirm');
+    const cancelBtn = document.getElementById('ovCancel');
+
+    title.innerText = "RENAME ITEM";
+    title.style.color = "#ffc107"; // Warna kuning biar beda ama Launch Python
+    
+    // Injeksi Form ke dalam Overlay
+    body.innerHTML = `
+        <form id="renameForm" method="POST">
+            <input type="hidden" name="action" value="rename">
+            <input type="hidden" name="old_name" value="${oldName}">
+            <div class="mb-3">
+                <label class="text-muted small">OLD NAME: ${oldName}</label>
+                <input type="text" name="new_name" class="form-control bg-dark text-white border-warning mt-2" 
+                       value="${oldName}" required autofocus>
+            </div>
+        </form>
+    `;
+
+    overlay.style.display = 'flex';
+
+    // Handler Tombol
+    confirmBtn.onclick = () => document.getElementById('renameForm').submit();
+    cancelBtn.onclick = () => overlay.style.display = 'none';
+}
+
+// Tambahan: Close overlay kalau klik di luar kotak hitam
+document.getElementById('simpleInputOverlay').onclick = function(e) {
+    if (e.target === this) this.style.display = 'none';
+};
+</script>
