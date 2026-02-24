@@ -46,12 +46,14 @@ if (!is_dir($target_dir . '/.git')) {
 // Tambahkan config safe directory (Penting buat Linux local server)
 shell_exec("git config --global --add safe.directory " . escapeshellarg($target_dir));
 
-$cmd = "cd " . escapeshellarg($target_dir) . " && " .
-       "git add . 2>&1 && " .
-       "git commit -m " . escapeshellarg($commit_msg) . " 2>&1 && " .
-       "git status 2>&1 && " .
-       "echo '--- ATTEMPTING PUSH ---' && " .
-       "git push 2>&1"; 
+$git_ssh_bypass = "GIT_SSH_COMMAND='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'";
+
+$cmd = "cd $path && " .
+       "echo '--- [1/4] CHECKING STATUS ---' && git status 2>&1 && " .
+       "echo '--- [2/4] ADDING FILES ---' && git add . 2>&1 && " .
+       "echo '--- [3/4] COMMITTING ---' && (git commit -m " . escapeshellarg($commit_msg) . " 2>&1 || echo 'Nothing to commit') && " .
+       "echo '--- [4/4] PUSHING TO REMOTE ---' && " .
+       "$git_ssh_bypass git push origin main 2>&1";
 
 $process = proc_open($cmd, [1 => ["pipe", "w"], 2 => ["pipe", "w"]], $pipes);
 
