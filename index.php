@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL); ini_set('display_errors', 1);
 // 1. KONEKSI DB (Saran: pindahin ke config.php nanti)
 require ('config.php');
 

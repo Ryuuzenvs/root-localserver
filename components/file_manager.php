@@ -1,24 +1,6 @@
 
 <?php
-// --- CRUD LOGIC ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['logged_in'])) {
-    // 1. Buat Folder Baru
-    if (isset($_POST['action']) && $_POST['action'] === 'mkdir') {
-        $new_folder = $target_dir . DIRECTORY_SEPARATOR . $_POST['folder_name'];
-        if (!file_exists($new_folder)) mkdir($new_folder, 0775);
-    }
-    
-    // 2. Hapus File/Folder
-    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-        $target = $target_dir . DIRECTORY_SEPARATOR . $_POST['item_name'];
-        if (is_dir($target)) rmdir($target); // Hati-hati: rmdir hanya kerja jika folder kosong
-        else unlink($target);
-    }
 
-    // Refresh halaman agar list terupdate
-    header("Location: " . $_SERVER['REQUEST_URI']);
-    exit;
-}
 // --- LOGIC FILE EXPLORER ---
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $root_path = realpath($_SERVER['DOCUMENT_ROOT']);
@@ -52,7 +34,25 @@ if ($files) {
         }
     }
 }
+// --- CRUD LOGIC ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['logged_in'])) {
+    // 1. Buat Folder Baru
+    if (isset($_POST['action']) && $_POST['action'] === 'mkdir') {
+        $new_folder = $target_dir . DIRECTORY_SEPARATOR . $_POST['folder_name'];
+        if (!file_exists($new_folder)) mkdir($new_folder, 0775);
+    }
+    
+    // 2. Hapus File/Folder
+    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+        $target = $target_dir . DIRECTORY_SEPARATOR . $_POST['item_name'];
+        if (is_dir($target)) rmdir($target); // Hati-hati: rmdir hanya kerja jika folder kosong
+        else unlink($target);
+    }
 
+    // Refresh halaman agar list terupdate
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
 // --- LOGIC PYTHON PROJECTS ---
 $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
 ?>
