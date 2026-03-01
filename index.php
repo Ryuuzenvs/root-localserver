@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $stmt->execute([$_POST['username']]);
     $u = $stmt->fetch();
     if ($u && password_verify($_POST['password'], $u['password'])) {
+        session_regenerate_id(true); // <--- TAMBAHKAN INI
         $_SESSION['logged_in'] = true;
         $_SESSION['username'] = $u['username'];
         header("Location: /"); exit;
