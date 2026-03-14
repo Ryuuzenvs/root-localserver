@@ -169,7 +169,7 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
 
 <div class="position-absolute d-flex gap-2" style="top: 5px; right: 20px; z-index: 10;">
 
-<a href="<?= $f['link'] ?>" class="btn btn-link text-info p-0 m-0 shadow-none">
+<a href="editor.php?file=<?= $f['link'] ?>" class="btn btn-link text-info p-0 m-0 shadow-none">
             <i class="fa-solid fa-floppy-disk"></i>
         </a>
 <button onclick="openRename('<?= $f['name'] ?>')" class="btn btn-link text-info p-0 m-0 shadow-none">
@@ -183,7 +183,7 @@ $projects = $pdo->query("SELECT * FROM py_projects")->fetchAll();
         </button>
     </form>
 </div>
-    <a href="editor.php?file=<?= $f['link'] ?>" class="item-card text-decoration-none ...">
+    <a href="<?= $f['link'] ?>" class="item-card text-decoration-none ...">
         <div class="file-wrapper">
             <i class="bi bi-file-earmark-code-fill text-info" style="font-size: 3.5rem; opacity: 0.8;"></i>
         </div>
