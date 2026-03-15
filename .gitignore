@@ -1,14 +1,23 @@
-# Node.js
-node_modules/    
-tmp/    
-lib/key.txt
-logs/      
-logs_panel/      
-plugins_backup/
-tracking_action/
-session/
-catatan update.txt
-npm-debug.log           
-yarn-error.log
-.pnpm-debug.log
-.env
+# 1. Abaikan semuanya
+/*
+
+# 2. Un-ignore folder yang ingin dilacak
+!/components/
+!/layout/
+
+# 3. Un-ignore file yang ingin dilacak
+!/index.php
+!/terminal.php
+!/security.php
+!/hash.php
+!/git_executor.php
+!/executor.php
+!/editor.php
+!/db_connection.php
+!/config.php
+!/api.php
+!/api_editor.php
+!/run.sh
+!/how to run py.txt
+!/.htaccess
+!/.gitignore

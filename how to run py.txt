@@ -1,0 +1,4 @@
+/var/www/html/venv/bin/python3
+
+/var/www/html/run.sh /var/www/html/pin-downloader/pin_downloader.py
+/var/www/html/run.sh /var/www/html/

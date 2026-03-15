@@ -1,0 +1,11 @@
+php_value auto_prepend_file "/var/www/html/security.php"
+#php_value auto_prepend_file "C:\xampp\htdocs\security.php"
+# Jika folder yang dibuka tidak punya index file, gunakan index.php di root
+DirectoryIndex index.php /index.php
+
+# Jika user ngetik URL yang file fisiknya gak ada sama sekali, lari ke index.php root
+FallbackResource /index.php
+
+RewriteEngine On
+RewriteRule ^\.env$ - [F,L]
+RewriteRule ^\.git - [F,L]
