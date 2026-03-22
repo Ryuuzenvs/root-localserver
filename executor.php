@@ -21,6 +21,7 @@ if (!$project) {
     exit;
 }
 
+///var/www/html/run.sh 1 tiktok-manager scripts/scraper.py
 // 2. Susun Command
 $run_sh = "/var/www/html/run.sh";
 //$run_sh = "/home/ryuu/my-homeserver/run.sh";
